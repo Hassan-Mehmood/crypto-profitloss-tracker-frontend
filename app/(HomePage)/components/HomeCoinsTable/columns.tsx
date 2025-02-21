@@ -46,15 +46,14 @@ export const columns: ColumnDef<HomeTableType>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Coin
-          </Button>
+        <Button
+          className="flex items-center"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Coin
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        </Button>
       );
     },
     cell: ({ row }) => (
@@ -73,15 +72,14 @@ export const columns: ColumnDef<HomeTableType>[] = [
     accessorKey: "current_price",
     header: ({ column }) => {
       return (
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Price
-          </Button>
+        <Button
+          className="flex items-center"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Price
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        </Button>
       );
     },
   },
@@ -89,15 +87,14 @@ export const columns: ColumnDef<HomeTableType>[] = [
     accessorKey: "market_cap",
     header: ({ column }) => {
       return (
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Market Cap
-          </Button>
+        <Button
+          className="flex items-center"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Market Cap
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        </Button>
       );
     },
   },
@@ -105,15 +102,14 @@ export const columns: ColumnDef<HomeTableType>[] = [
     accessorKey: "price_change_percentage_1h_in_currency",
     header: ({ column }) => {
       return (
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            1h
-          </Button>
+        <Button
+          className="flex items-center"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          1h
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        </Button>
       );
     },
   },
@@ -121,15 +117,14 @@ export const columns: ColumnDef<HomeTableType>[] = [
     accessorKey: "price_change_percentage_24h_in_currency",
     header: ({ column }) => {
       return (
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            24h
-          </Button>
+        <Button
+          className="flex items-center"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          24h
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        </Button>
       );
     },
   },
@@ -137,15 +132,14 @@ export const columns: ColumnDef<HomeTableType>[] = [
     accessorKey: "price_change_percentage_7d_in_currency",
     header: ({ column }) => {
       return (
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            7d
-          </Button>
+        <Button
+          className="flex items-center"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          7d
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        </Button>
       );
     },
   },
@@ -153,15 +147,14 @@ export const columns: ColumnDef<HomeTableType>[] = [
     accessorKey: "total_volume",
     header: ({ column }) => {
       return (
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Total Volume
-          </Button>
+        <Button
+          className="flex items-center"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Total Volume
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        </Button>
       );
     },
   },
