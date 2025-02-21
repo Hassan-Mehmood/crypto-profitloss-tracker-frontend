@@ -41,7 +41,7 @@ export interface HomeTableType {
 
 export type HomeTableData = HomeTableType[];
 
-export const columns: ColumnDef<HomeTableData>[] = [
+export const columns: ColumnDef<HomeTableType>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
