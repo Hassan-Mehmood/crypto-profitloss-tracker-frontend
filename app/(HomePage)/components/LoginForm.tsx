@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,19 +17,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import { serverApi } from "@/app/axios";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
-  username: z.string().min(2),
-  password: z.string().min(6),
+  username: z.string().min(1),
+  password: z.string().min(1),
 });
 
 export default function LoginForm() {
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,11 +38,20 @@ export default function LoginForm() {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  const { mutateAsync, isPending, error } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: async (credentials: z.infer<typeof formSchema>) => {
+      const response = await serverApi.post("/users/signin", credentials);
+      return response.data;
+    },
+    onSuccess: () => {
+      form.reset();
+      // Add additional success handling here (e.g., redirect, store token, etc.)
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await mutateAsync(values);
   }
 
   return (
@@ -65,7 +73,6 @@ export default function LoginForm() {
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -79,15 +86,22 @@ export default function LoginForm() {
                     <FormControl>
                       <Input {...field} type="password" />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Logging in..." : "Submit"}
+              </Button>
             </form>
           </Form>
         </DialogHeader>
+
+        {error && (
+          <p className="text-center text-red-500">
+            {error.response.data.message || "Login failed"}
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );
