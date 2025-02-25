@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,21 +17,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-import { getData } from "@/app/actions";
+import { serverApi } from "@/app/axios";
+import { useMutation } from "@tanstack/react-query";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   email: z.string().email(),
   username: z.string().min(2),
   password: z.string().min(6),
 });
 
 export default function SignupForm() {
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,9 +40,19 @@ export default function SignupForm() {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    getData();
+  const { mutateAsync, isPending, error } = useMutation({
+    mutationKey: ["signup"],
+    mutationFn: async (formData: z.infer<typeof formSchema>) => {
+      const response = await serverApi.post("/users/signup", formData);
+      return response.data;
+    },
+    onSuccess: () => {
+      form.reset();
+    },
+  });
+
+  async function onSubmit(formData: z.infer<typeof formSchema>) {
+    await mutateAsync(formData);
   }
 
   return (
@@ -66,7 +74,6 @@ export default function SignupForm() {
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -80,7 +87,6 @@ export default function SignupForm() {
                     <FormControl>
                       <Input {...field} type="email" />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -94,15 +100,22 @@ export default function SignupForm() {
                     <FormControl>
                       <Input {...field} type="password" />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Processing..." : "Submit"}
+              </Button>
             </form>
           </Form>
         </DialogHeader>
+
+        {error && (
+          <p className="text-center text-red-500">
+            {error.response.data.message || "Signup failed"}
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );

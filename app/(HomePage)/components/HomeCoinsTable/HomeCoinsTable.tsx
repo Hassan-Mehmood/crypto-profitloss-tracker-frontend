@@ -38,7 +38,7 @@ export interface HomeTableType {
 
 export type HomeTableData = HomeTableType[];
 
-import { api } from "@/app/axios";
+import { coinGecko } from "@/app/axios";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "./DataTable";
 import { columns } from "./columns";
@@ -47,7 +47,7 @@ export default function HomeCoinsTable() {
   const { data, isLoading } = useQuery({
     queryKey: ["homeTableCoins"],
     queryFn: async () => {
-      const response = await api.get(
+      const response = await coinGecko.get(
         "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d",
       );
 
