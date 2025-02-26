@@ -46,7 +46,6 @@ export default function LoginForm() {
     },
     onSuccess: () => {
       form.reset();
-      // Add additional success handling here (e.g., redirect, store token, etc.)
     },
   });
 

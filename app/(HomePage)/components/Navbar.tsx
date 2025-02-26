@@ -1,5 +1,3 @@
-// "use client";
-
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -11,6 +9,8 @@ import {
 import Link from "next/link";
 import SignupForm from "@/app/(HomePage)/components/SignupForm";
 import LoginForm from "@/app/(HomePage)/components/LoginForm";
+import { serverApi } from "@/app/axios";
+import Logout from "./Logout";
 
 export default function Navbar() {
   return (
@@ -35,6 +35,10 @@ export default function Navbar() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <LoginForm />
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Logout />
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
