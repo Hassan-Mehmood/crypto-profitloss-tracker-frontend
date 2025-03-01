@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getUserCookie } from "./actions/cookiesActions";
 
 export const coinGecko = axios.create({
   baseURL: "https://api.coingecko.com/api/v3/",

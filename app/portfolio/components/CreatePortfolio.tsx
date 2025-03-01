@@ -22,34 +22,39 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { serverApi } from "@/app/axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
+import { AxiosError } from "axios";
+import { useState } from "react";
 
 const formSchema = z.object({
-  username: z.string().min(1, { message: "Username is required" }),
-  password: z.string().min(1, { message: "Password is required" }),
+  name: z.string().min(1, { message: "Name is required" }),
 });
 
-export default function LoginForm() {
+export default function CreatePortfolio() {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      name: "",
     },
   });
 
   const { mutateAsync, isPending, error } = useMutation({
-    mutationKey: ["login"],
+    mutationKey: ["create-portfolio"],
     mutationFn: async (credentials: z.infer<typeof formSchema>) => {
-      const response = await serverApi.post("/users/signin", credentials);
+      const response = await serverApi.post("/portfolio/create", credentials);
       return response.data;
     },
     onSuccess: () => {
       form.reset();
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
       router.refresh();
+      setOpen(false);
     },
   });
 
@@ -58,36 +63,25 @@ export default function LoginForm() {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger className={navigationMenuTriggerStyle()}>
-        Login
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger className={navigationMenuTriggerStyle() + " border p-2"}>
+        <div className="flex items-center gap-2">
+          <Plus className="h-4 w-4" /> Create Portfolio
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="mb-4">Login</DialogTitle>
+          <DialogTitle className="mb-4">Create Portfolio</DialogTitle>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="username"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="password" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -100,9 +94,9 @@ export default function LoginForm() {
           </Form>
         </DialogHeader>
 
-        {error && (
+        {error instanceof AxiosError && (
           <p className="text-center text-red-500">
-            {error.response.data.message || "Login failed"}
+            {error.response?.data.message || "Login failed"}
           </p>
         )}
       </DialogContent>

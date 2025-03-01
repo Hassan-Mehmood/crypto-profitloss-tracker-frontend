@@ -55,11 +55,11 @@ export default function HomeCoinsTable() {
     },
   });
 
-  console.log(data);
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  console.log(data);
 
   return (
     <section>

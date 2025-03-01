@@ -1,25 +1,86 @@
-import { cookies } from "next/headers";
+"use client";
+
+import { redirect } from "next/navigation";
+import { getUserCookie } from "../actions/cookiesActions";
 import { serverApi } from "../axios";
+import CreatePortfolio from "./components/CreatePortfolio";
+import { SelectPortfolio } from "./components/SelectPortfolio";
+import { useQuery } from "@tanstack/react-query";
 
-export default async function PortfolioPage() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get("userCookie")?.value;
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
 
-  console.log(sessionCookie ? sessionCookie : "false");
+export type Portfolio = {
+  id: string;
+  name: string;
+  userId: string;
+};
 
-  if (!sessionCookie) {
-    return (
-      <div>
-        <p>You are not logged in</p>
-      </div>
-    );
+export default function PortfolioPage() {
+  const [activePortfolio, setActivePortfolio] = useState<string | undefined>(
+    undefined,
+  );
+
+  const { data: portfolios, isLoading } = useQuery({
+    queryKey: ["portfolios"],
+    queryFn: async () => {
+      const response = await serverApi.get<Portfolio[]>(
+        "/portfolio/get-all-portfolios",
+      );
+      return response.data;
+    },
+  });
+
+  const { data: portfolioData } = useQuery({
+    queryKey: ["portfolioData", activePortfolio],
+    queryFn: async () => {
+      const response = await serverApi.get<Portfolio>(
+        `/portfolio/get-portfolio/${activePortfolio}`,
+      );
+      return response.data;
+    },
+
+    enabled: !!activePortfolio,
+  });
+
+  console.log(portfolioData);
+
+  useEffect(() => {
+    if (portfolios?.length && !activePortfolio) {
+      setActivePortfolio(portfolios[0].id);
+    }
+  }, [portfolios, activePortfolio, isLoading]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
-  // const { data, status } = await serverApi.get("/users/protected", {
-  //   headers: {
-  //     cookie: `connect.sid=${sessionCookie}`,
-  //   },
-  // });
+  return (
+    <>
+      {portfolios?.length === 0 ? (
+        <CreatePortfolio />
+      ) : (
+        <Tabs value={activePortfolio} onValueChange={setActivePortfolio}>
+          <div className="flex items-center gap-2">
+            <TabsList className="flex items-center justify-start gap-2 bg-transparent">
+              {portfolios?.map((portfolio) => (
+                <TabsTrigger
+                  key={portfolio.id}
+                  value={portfolio.id}
+                  className="data-[state=active]:bg-[#34af008e] data-[state=active]:text-[#52863c]"
+                >
+                  {portfolio.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-  return <div>Portfolio</div>;
+            <CreatePortfolio />
+          </div>
+          <TabsContent value="account">
+            Make changes to your account here.
+          </TabsContent>
+        </Tabs>
+      )}
+    </>
+  );
 }

@@ -9,13 +9,17 @@ import {
 import Link from "next/link";
 import SignupForm from "@/app/(HomePage)/components/SignupForm";
 import LoginForm from "@/app/(HomePage)/components/LoginForm";
-import { serverApi } from "@/app/axios";
 import Logout from "./Logout";
+import { getUserCookie } from "@/app/actions/cookiesActions";
+import { useQuery } from "@tanstack/react-query";
+import { serverApi } from "@/app/axios";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const cookie = await getUserCookie();
+
   return (
     <NavigationMenu className="mb-10 pt-10">
-      <NavigationMenuList className="gap-4">
+      <NavigationMenuList className="">
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -23,23 +27,34 @@ export default function Navbar() {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/portfolio" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Portfolio
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <SignupForm />
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <LoginForm />
-        </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <Logout />
-        </NavigationMenuItem>
+        {cookie && (
+          <NavigationMenuItem>
+            <Link href="/portfolio" legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                Portfolio
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
+        )}
+
+        {!cookie && (
+          <>
+            <NavigationMenuItem>
+              <SignupForm />
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <LoginForm />
+            </NavigationMenuItem>
+          </>
+        )}
+
+        {cookie && (
+          <NavigationMenuItem>
+            <Logout />
+          </NavigationMenuItem>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );
