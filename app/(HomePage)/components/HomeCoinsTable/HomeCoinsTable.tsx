@@ -62,7 +62,7 @@ export default function HomeCoinsTable() {
   }
 
   return (
-    <section>
+    <section className="py-10">
       <DataTable columns={columns} data={data} />
     </section>
   );
