@@ -1,4 +1,3 @@
-import { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { Webhook } from "svix";
 
@@ -23,15 +22,15 @@ export async function POST(request: Request) {
   const payload = await request.json();
   const body = JSON.stringify(payload);
 
-  let evt: WebhookEvent;
+  // let evt: WebhookEvent;
 
   // Verify payload with headers
   try {
-    evt = wh.verify(body, {
+    wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    }) as WebhookEvent;
+    });
   } catch (err) {
     console.error("Error: Could not verify webhook:", err);
     return new Response("Error: Verification error", {

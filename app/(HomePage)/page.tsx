@@ -1,4 +1,4 @@
-import HomeCoinsTable from "@/app/(HomePage)/components/HomeCoinsTable/HomeCoinsTable";
+// import HomeCoinsTable from "@/app/(HomePage)/components/HomeCoinsTable/HomeCoinsTable";
 import Navbar from "@/app/(HomePage)/components/Navbar";
 
 export default function HomePage() {
