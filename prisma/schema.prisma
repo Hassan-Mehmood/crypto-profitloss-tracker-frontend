@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  clerkId   String      @unique
+  email     String      @unique
+  username  String?
+  firstName String
+  lastName  String
+  imgUrl    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Porfolio  Portfolio[]
+}
+
+model Portfolio {
+  id              String            @id @default(uuid())
+  name            String
+  user            User              @relation(fields: [userId], references: [id])
+  userId          String
+  PortfolioAssets PortfolioAssets[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Transactions    Transactions[]
+}
+
+model Asset {
+  id              String            @id @default(uuid())
+  name            String
+  symbol          String
+  image           String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  PortfolioAssets PortfolioAssets[]
+  Transactions    Transactions?
+}
+
+model PortfolioAssets {
+  id              String    @id @default(uuid())
+  portfolio       Portfolio @relation(fields: [portfolioId], references: [id])
+  portfolioId     String    @unique
+  asset           Asset     @relation(fields: [assetId], references: [id])
+  assetId         String    @unique
+  currentQuantity Float
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Transactions {
+  id              String          @id @default(uuid())
+  portfolio       Portfolio       @relation(fields: [portfolioId], references: [id])
+  portfolioId     String
+  asset           Asset           @relation(fields: [assetId], references: [id])
+  assetId         String          @unique
+  transactionType TransactionType
+  quantity        Float
+  pricePerUnit    Float
+  transactionDate DateTime
+  fee             Float?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+enum TransactionType {
+  BUY
+  SELL
+}

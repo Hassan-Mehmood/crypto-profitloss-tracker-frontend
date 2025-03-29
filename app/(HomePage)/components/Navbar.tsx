@@ -18,7 +18,7 @@ export default async function Navbar() {
 
   return (
     <NavigationMenu className="mb-10 pt-10">
-      <NavigationMenuList className="">
+      <NavigationMenuList className="gap-4">
         <NavigationMenuItem>
           <Link href="/">Home</Link>
         </NavigationMenuItem>

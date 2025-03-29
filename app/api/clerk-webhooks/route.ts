@@ -1,5 +1,10 @@
 import { headers } from "next/headers";
 import { Webhook } from "svix";
+import {
+  handleUserCreated,
+  handleUserDeleted,
+  handleUserUpdated,
+} from "@/app/api/clerk-webhooks/utils/userEvents";
 
 export async function POST(request: Request) {
   const SIGNING_SECRET = process.env.WEBHOOK_SIGNING_SECRET;
@@ -22,9 +27,6 @@ export async function POST(request: Request) {
   const payload = await request.json();
   const body = JSON.stringify(payload);
 
-  // let evt: WebhookEvent;
-
-  // Verify payload with headers
   try {
     wh.verify(body, {
       "svix-id": svix_id,
@@ -38,7 +40,19 @@ export async function POST(request: Request) {
     });
   }
 
-  console.log("Webhook payload:", body);
+  switch (payload.type) {
+    case "user.created":
+      // TODO: user.deleted, user.updated
+      await handleUserCreated(payload);
+      break;
+    case "user.deleted":
+      await handleUserDeleted(payload);
+      break;
+    case "user.updated":
+      await handleUserUpdated(payload);
+    default:
+      break;
+  }
 
   return new Response("Webhook received", { status: 200 });
 }
